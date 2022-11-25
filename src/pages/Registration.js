@@ -11,14 +11,14 @@ export function Registration(props) {
         lastName: "",
     });
 
-    const onChange = (e) => {
+    const handleChange = (e) => {
         setState({
             ...state,
             [e.target.name]: e.target.value,
         })
     };
 
-    const onSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // funny
         try {
             const res = await request.register({
@@ -44,34 +44,34 @@ export function Registration(props) {
         <div>
             <h2>Registration</h2>
             <Link to="/login">To Login</Link>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit}>
                 <input
                     name="login"
                     type="text"
                     placeholder="Login"
                     value={state.login}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <input
                     name="password"
                     type="password"
                     placeholder="Password"
                     value={state.password}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <input
                     name="firstName"
                     type="text"
                     placeholder="First Name"
                     value={state.firstName}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <input
                     name="lastName"
                     type="text"
                     placeholder="Last Name"
                     value={state.lastName}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <button type="submit">
                     Submit

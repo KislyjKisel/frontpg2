@@ -9,14 +9,14 @@ export function Login(props) {
         password: "",
     });
 
-    const onChange = (e) => {
+    const handleChange = (e) => {
         setState({
             ...state,
             [e.target.name]: e.target.value,
         })
     };
 
-    const onSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // funny
         try {
             const res = await request.login({ login: state.login, password: state.password });
@@ -38,20 +38,20 @@ export function Login(props) {
         <div>
             <h2>Login</h2>
             <Link to="/registration">To Registration</Link>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit}>
                 <input
                     name="login"
                     type="text"
                     placeholder="Login"
                     value={state.login}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <input
                     name="password"
                     type="password"
                     placeholder="Password"
                     value={state.password}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
                 <button type="submit">
                     Submit

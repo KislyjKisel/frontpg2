@@ -11,7 +11,7 @@ export function Home() {
         text: "",
     });
 
-    const onChange = (e) => {
+    const handleChange = (e) => {
         let newState = { viewId, title, text };
         setState({
             ...newState,
@@ -51,9 +51,9 @@ export function Home() {
             <Link to="/registration">To Registration</Link>
             <Link to="/login">To Login</Link>
             <h2>View</h2>
-            <input name="viewId" placeholder="View ID" value={viewId} onChange={onChange}/>
-            <input name="title" placeholder="Title" value={title} onChange={onChange}/>
-            <input name="text" placeholder="Text" value={text} onChange={onChange}/>
+            <input name="viewId" placeholder="View ID" value={viewId} onChange={handleChange}/>
+            <input name="title" placeholder="Title" value={title} onChange={handleChange}/>
+            <input name="text" placeholder="Text" value={text} onChange={handleChange}/>
             <button onClick={view}>View</button>
             <button onClick={create}>Post</button>
         </div>
