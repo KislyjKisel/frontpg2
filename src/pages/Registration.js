@@ -1,10 +1,8 @@
-import { useContext } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { AppContext } from '../App';
 import { useState } from 'react';
+import request from '../request';
 
 export function Registration(props) {
-    const appCtx = useContext(AppContext);
     const navigate = useNavigate();
     const [state, setState] = useState({
         login: "",
@@ -23,15 +21,11 @@ export function Registration(props) {
     const onSubmit = async (e) => {
         e.preventDefault(); // funny
         try {
-            const res = await appCtx.axios({
-                method: 'POST',
-                url: 'http://localhost:12345/api/auth/register',
-                data: {
-                    login: state.login,
-                    password: state.password,
-                    firstName: state.firstName,
-                    lastName: state.lastName,
-                }
+            const res = await request.register({
+                login: state.login,
+                password: state.password,
+                firstName: state.firstName,
+                lastName: state.lastName,
             });
             if(res.status === 201) {
                 window.localStorage.setItem("tokens", JSON.stringify({

@@ -1,10 +1,9 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AppContext } from '../App';
 import { AuthContext } from '../components/Auth';
+import request from '../request';
 
 export function Home() {
-    const appCtx = useContext(AppContext);
     const authCtx = useContext(AuthContext);
     const [{ viewId, title, text }, setState] = useState({
         viewId: 0,
@@ -22,10 +21,7 @@ export function Home() {
 
     const view = async (e) => {
         try {
-            const res = await appCtx.axios({
-                method: 'GET',
-                url: `http://localhost:12345/api/post/view?id=${viewId}`
-            });
+            const res = await request.postView(viewId);
 
             setState({
                 viewId,
@@ -41,16 +37,7 @@ export function Home() {
     const create = async (e) => {
         try {
             console.log(authCtx.tokens.accessToken);
-            const res = await appCtx.axios({
-                method: 'POST',
-                url: `http://localhost:12345/api/post/create`,
-                data: {
-                    title, text
-                },
-                headers: {
-                    'Authorization': `Bearer ${authCtx.tokens.accessToken}`
-                }
-            });
+            const res = await request.postCreate({ title, text });
             console.log(res);
         }
         catch(e) {

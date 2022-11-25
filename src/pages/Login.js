@@ -1,10 +1,8 @@
-import { useContext } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { AppContext } from '../App';
 import { useState } from 'react';
+import request from '../request';
 
 export function Login(props) {
-    const appCtx = useContext(AppContext);
     const navigate = useNavigate();
     const [state, setState] = useState({
         login: "",
@@ -21,14 +19,7 @@ export function Login(props) {
     const onSubmit = async (e) => {
         e.preventDefault(); // funny
         try {
-            const res = await appCtx.axios({
-                method: 'POST',
-                url: 'http://localhost:12345/api/auth/login',
-                data: {
-                    login: state.login,
-                    password: state.password,
-                }
-            });
+            const res = await request.login({ login: state.login, password: state.password });
             if(res.status === 200) {
                 window.localStorage.setItem("tokens", JSON.stringify({
                     accessToken: res.data.accessToken,
