@@ -8,8 +8,9 @@ const axiosInstance = axios.create({
 });
 
 function authHeaders() {
+    const tokens = JSON.parse(localStorage.getItem('tokens'));
     return {
-        Authorization: `Bearer ${localStorage.getItem('tokens').accessToken}`,
+        Authorization: `Bearer ${tokens.accessToken}`,
     };
 };
 
