@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
+
 import request from '../request';
+
 
 export function Registration(props) {
     const navigate = useNavigate();
