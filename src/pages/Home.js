@@ -5,43 +5,43 @@ import request from '../request';
 
 export function Home() {
     const { userInfo } = useContext(AuthContext);
-    const [{ viewId, title, text }, setState] = useState({
+    const [state, setState] = useState({
         viewId: 0,
         title: "",
         text: "",
     });
 
     const handleChange = (e) => {
-        let newState = { viewId, title, text };
         setState({
-            ...newState,
+            ...state,
             [e.target.name]: e.target.value
         });
     }
 
     const view = async (e) => {
         try {
-            const res = await request.postView(viewId);
+            const res = await request.postView(state.viewId);
 
             setState({
-                viewId,
+                viewId: state.viewId,
                 title: res.data.title,
                 text: res.data.text,
             });
         }
         catch(e) {
-            alert(e);
-            console.log(e);
+            throw e;
         }
     };
+
     const create = async (e) => {
         try {
-            const res = await request.postCreate({ title, text });
-            console.log(res);
+            const res = await request.postCreate({
+                title: state.title,
+                text: state.text,
+            });
         }
         catch(e) {
-            alert(e);
-            console.log(e);
+            throw e;
         }
     };
 
@@ -51,9 +51,9 @@ export function Home() {
             <Link to="/registration">To Registration</Link>
             <Link to="/login">To Login</Link>
             <h2>View</h2>
-            <input name="viewId" placeholder="View ID" value={viewId} onChange={handleChange}/>
-            <input name="title" placeholder="Title" value={title} onChange={handleChange}/>
-            <input name="text" placeholder="Text" value={text} onChange={handleChange}/>
+            <input name="viewId" placeholder="View ID" value={state.viewId} onChange={handleChange}/>
+            <input name="title" placeholder="Title" value={state.title} onChange={handleChange}/>
+            <input name="text" placeholder="Text" value={state.text} onChange={handleChange}/>
             <button onClick={view}>View</button>
             <button onClick={create}>Post</button>
         </div>
