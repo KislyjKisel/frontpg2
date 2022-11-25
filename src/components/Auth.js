@@ -1,40 +1,50 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react';
+import request from '../request';
+import { AxiosError } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
-export const AuthContext = React.createContext({ tokens: null });
+const unauthenticatedState = { isUserLoggedIn: false, userInfo: null };
+
+export const AuthContext = React.createContext(unauthenticatedState);
 
 export function Auth(props) {
     const navigate = useNavigate();
-    let [{ tokens, login }, setState] = useState({
-        tokens: {},
-        login: '',
-    });
+    let [{ isUserLoggedIn, userInfo }, setState] = useState(unauthenticatedState);
 
-    useEffect(() => {
-        if(!tokens.access) {
-            const oldTokensStr = window.localStorage.getItem('tokens');
-            const oldLogin = window.localStorage.getItem('login');
-            if(!oldTokensStr || !oldLogin) {
-                console.log("not ", oldTokensStr, oldLogin);
+    useEffect(() => { (async () => {
+        if(isUserLoggedIn) return;
+
+        if(!localStorage.getItem('tokens')) {
+            if(props.required) {
                 navigate('/login');
             }
-            else {
-                const oldTokens = JSON.parse(oldTokensStr);
-                if(!oldTokens || !oldTokens.accessToken) {
-                    navigate('/login');
-                }
-                else {
-                    tokens = oldTokens;
-                    login = oldLogin;
-                    setState({ tokens, login });
-                }
+            return;
+        }
+
+        try {
+            const res = await request.user();
+            if(res.status !== StatusCodes.OK) throw new Error('Unknown response status: ' + res.statusText);
+            setState({ isUserLoggedIn: true, userInfo: res.data });
+        }
+        catch(e) {
+            if(!(e instanceof AxiosError)) {
+                throw e;
+            }
+            if(e.response.status !== StatusCodes.CONFLICT &&
+                e.response.status !== StatusCodes.UNAUTHORIZED &&
+                e.response.status !== StatusCodes.BAD_REQUEST) {
+                throw e;
+            }
+            if(props.required) {
+                navigate('/login');
             }
         }
-    }, []);
+    })(); }, []);
 
-    return (
-        <AuthContext.Provider value={{ tokens, login }}>
+    return isUserLoggedIn ? (
+        <AuthContext.Provider value={{ isUserLoggedIn, userInfo }}>
             {props.children}
         </AuthContext.Provider>
-    );
+    ) : 'Wait';
 }

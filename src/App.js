@@ -13,7 +13,7 @@ function App() {
                 <Route path="/registration" element={<Registration />}/>
                 <Route path="/login" element={<Login />}/>
                 <Route path="/" element={
-                    <Auth>
+                    <Auth required={true}>
                         <Home/>
                     </Auth>
                 } />

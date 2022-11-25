@@ -4,7 +4,7 @@ import { AuthContext } from '../components/Auth';
 import request from '../request';
 
 export function Home() {
-    const authCtx = useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
     const [{ viewId, title, text }, setState] = useState({
         viewId: 0,
         title: "",
@@ -36,7 +36,6 @@ export function Home() {
     };
     const create = async (e) => {
         try {
-            console.log(authCtx.tokens.accessToken);
             const res = await request.postCreate({ title, text });
             console.log(res);
         }
@@ -48,7 +47,7 @@ export function Home() {
 
     return (
         <div>
-            <h2>Welcome home, {authCtx.login}</h2>
+            <h2>Welcome home, {userInfo.login}</h2>
             <Link to="/registration">To Registration</Link>
             <Link to="/login">To Login</Link>
             <h2>View</h2>
