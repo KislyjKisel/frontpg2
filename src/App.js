@@ -6,7 +6,6 @@ import { Login } from './pages/Login';
 import { Registration } from './pages/Registration';
 import { Home } from './pages/Home';
 import { Auth } from './components/Auth';
-import { User } from './pages/User';
 
 const axiosInstance = axios.create({
     withCredentials: true,
@@ -23,7 +22,6 @@ function App() {
                 <Routes>
                     <Route path="/registration" element={<Registration />}/>
                     <Route path="/login" element={<Login />}/>
-                    <Route path="/user" element={<User/>}/>
                     <Route path="/" element={
                         <Auth>
                             <Home/>
