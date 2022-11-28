@@ -10,6 +10,12 @@ const unauthenticatedState = { isUserLoggedIn: false, userInfo: null };
 
 export const AuthContext = React.createContext(unauthenticatedState);
 
+const AUTH_REQUIRED_RESPONSE_STATUSES = [
+    StatusCodes.CONFLICT,
+    StatusCodes.UNAUTHORIZED,
+    StatusCodes.BAD_REQUEST
+];
+
 export function Auth(props) {
     const navigate = useNavigate();
     let [{ isUserLoggedIn, userInfo }, setState] = useState(unauthenticatedState);
@@ -33,9 +39,7 @@ export function Auth(props) {
             if(!(e instanceof AxiosError)) {
                 throw e;
             }
-            if(e.response.status !== StatusCodes.CONFLICT &&
-                e.response.status !== StatusCodes.UNAUTHORIZED &&
-                e.response.status !== StatusCodes.BAD_REQUEST) {
+            if(!AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response.status)) {
                 throw e;
             }
             if(props.required) {
@@ -44,9 +48,14 @@ export function Auth(props) {
         }
     })(); }, []);
 
-    return isUserLoggedIn ? (
-        <AuthContext.Provider value={{ isUserLoggedIn, userInfo }}>
-            {props.children}
-        </AuthContext.Provider>
-    ) : 'Wait';
+    if(isUserLoggedIn) {
+        return (
+            <AuthContext.Provider value={{ isUserLoggedIn, userInfo }}>
+                {props.children}
+            </AuthContext.Provider>
+        );
+    }
+    else {
+        return 'Wait';
+    }
 }
