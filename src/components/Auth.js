@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { useNavigate } from 'react-router-dom'
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import request from '../request';
 
@@ -10,30 +10,70 @@ const unauthenticatedState = { isUserLoggedIn: false, userInfo: null };
 
 export const AuthContext = React.createContext(unauthenticatedState);
 
+export function AuthProvider(props) {
+    let [{ isUserLoggedIn, userInfo }, setState] = useState(unauthenticatedState);
+
+    const updateUserInfo = (newUserInfo) => {
+        setState({
+            isUserLoggedIn: true,
+            userInfo: newUserInfo,
+        });
+    };
+
+    const logout = () => {
+        setState(unauthenticatedState);
+    };
+
+    return (
+        <AuthContext.Provider value={{
+            isUserLoggedIn,
+            userInfo,
+            updateUserInfo,
+            logout,
+        }}>
+            {props.children}
+        </AuthContext.Provider>
+    );
+}
+
 const AUTH_REQUIRED_RESPONSE_STATUSES = [
     StatusCodes.CONFLICT,
     StatusCodes.UNAUTHORIZED,
     StatusCodes.BAD_REQUEST
 ];
 
-export function Auth(props) {
+export function OnlyUnauthenticated(props) {
+    const authCtx = useContext(AuthContext);
     const navigate = useNavigate();
-    let [{ isUserLoggedIn, userInfo }, setState] = useState(unauthenticatedState);
+
+    useEffect(() => {
+        if(authCtx.isUserLoggedIn) {
+            navigate(props.redirect);
+            return;
+        }
+    }, [authCtx.isUserLoggedIn]);
+
+    return props.children;
+}
+
+export function AuthRequired(props) {
+    const authCtx = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => { (async () => {
-        if(isUserLoggedIn) return;
+        if(authCtx.isUserLoggedIn) return;
 
         if(!localStorage.getItem('tokens')) {
-            if(props.required) {
-                navigate('/login');
-            }
+            navigate(props.redirect);
             return;
         }
 
         try {
             const res = await request.user();
-            if(res.status !== StatusCodes.OK) throw new Error('Unknown response status: ' + res.statusText);
-            setState({ isUserLoggedIn: true, userInfo: res.data });
+            if(res.status !== StatusCodes.OK) {
+                throw new Error('Unknown response status: ' + res.statusText);
+            }
+            authCtx.updateUserInfo(res.data);
         }
         catch(e) {
             if(!(e instanceof AxiosError)) {
@@ -42,18 +82,12 @@ export function Auth(props) {
             if(!AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response.status)) {
                 throw e;
             }
-            if(props.required) {
-                navigate('/login');
-            }
+            navigate(props.redirect);
         }
-    })(); }, []);
+    })(); }, [authCtx.isUserLoggedIn]);
 
-    if(isUserLoggedIn) {
-        return (
-            <AuthContext.Provider value={{ isUserLoggedIn, userInfo }}>
-                {props.children}
-            </AuthContext.Provider>
-        );
+    if(authCtx.isUserLoggedIn) {
+        return props.children;
     }
     else {
         return 'Wait';
