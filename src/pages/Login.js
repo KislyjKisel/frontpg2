@@ -1,7 +1,7 @@
-import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { useState } from 'react';
 import { useNavigate, Link as RLink } from "react-router-dom";
+import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
 import request from '../request';
 
@@ -71,7 +71,6 @@ export function Login(props) {
                         required
                         fullWidth
                         name="login"
-                        type="text"
                         label="Login"
                         value={state.login}
                         onChange={handleChange}
