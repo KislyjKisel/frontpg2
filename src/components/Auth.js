@@ -79,7 +79,7 @@ export function AuthRequired(props) {
             if(!(e instanceof AxiosError)) {
                 throw e;
             }
-            if(!AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response.status)) {
+            if(!AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response?.status)) {
                 throw e;
             }
             navigate(props.redirect);
