@@ -1,9 +1,7 @@
-import { AxiosError } from 'axios';
-import { StatusCodes } from 'http-status-codes';
 import { useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react';
 
-import request from '../request';
+import request, { isAuthRequiredError } from '../request';
 
 
 const unauthenticatedState = { isUserLoggedIn: false, userInfo: null };
@@ -36,11 +34,6 @@ export function AuthProvider(props) {
     );
 }
 
-const AUTH_REQUIRED_RESPONSE_STATUSES = [
-    StatusCodes.CONFLICT,
-    StatusCodes.UNAUTHORIZED,
-    StatusCodes.BAD_REQUEST
-];
 
 export function OnlyUnauthenticated(props) {
     const authCtx = useContext(AuthContext);
@@ -56,6 +49,33 @@ export function OnlyUnauthenticated(props) {
     return props.children;
 }
 
+
+const AuthReqContext = React.createContext({});
+
+const requestAuthenticated = (redirect, navigate, logout = undefined) => async (req) => {
+    try {
+        return await req()
+    }
+    catch(e) {
+        if(!isAuthRequiredError(e)) {
+            throw e;
+        }
+        if(logout) {
+            logout();
+            alert('Session expired, please re-login');
+        }
+        navigate(redirect);
+    }
+};
+
+export function useRequestAuthenticated() {
+    const { logout } = useContext(AuthContext);
+    const { redirect } = useContext(AuthReqContext);
+    const navigate = useNavigate();
+
+    return requestAuthenticated(redirect, navigate, logout);
+}
+
 export function AuthRequired(props) {
     const authCtx = useContext(AuthContext);
     const navigate = useNavigate();
@@ -68,26 +88,18 @@ export function AuthRequired(props) {
             return;
         }
 
-        try {
+        requestAuthenticated(props.redirect, navigate)(async () => {
             const res = await request.user();
-            if(res.status !== StatusCodes.OK) {
-                throw new Error('Unknown response status: ' + res.statusText);
-            }
             authCtx.updateUserInfo(res.data);
-        }
-        catch(e) {
-            if(!(e instanceof AxiosError)) {
-                throw e;
-            }
-            if(!AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response?.status)) {
-                throw e;
-            }
-            navigate(props.redirect);
-        }
+        });
     })(); }, [authCtx.isUserLoggedIn]);
 
     if(authCtx.isUserLoggedIn) {
-        return props.children;
+        return (
+            <AuthReqContext.Provider value={{ redirect: props.redirect }}>
+                {props.children}
+            </AuthReqContext.Provider>
+        );
     }
     else {
         return 'Wait';
