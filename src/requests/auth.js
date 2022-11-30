@@ -24,15 +24,6 @@ export function isAuthRequiredError(e) {
         AUTH_REQUIRED_RESPONSE_STATUSES.includes(e.response?.status);
 }
 
-
-function login({ login, password }) {
-    return request.post('auth/login', { login, password });
-}
-
-function register({ login, password, firstName, lastName }) {
-    return request.post('auth/register', { login, password, firstName, lastName });
-}
-
 function refresh() {
     return request.post(
         'auth/refresh',
@@ -42,11 +33,16 @@ function refresh() {
     );
 }
 
-export default {
-    login,
-    register,
-    refresh,
-}
+const requestAuth = {
+    login: ({ login, password }) => {
+        return request.post('auth/login', { login, password });
+    },
+    register: ({ login, password, firstName, lastName }) => {
+        return request.post('auth/register', { login, password, firstName, lastName });
+    },
+};
+
+export default requestAuth;
 
 
 function authHeaders() {
