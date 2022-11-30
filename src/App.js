@@ -12,7 +12,7 @@ function App() {
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/registration" element={
+                    <Route path="/register" element={
                         <OnlyUnauthenticated redirect='/'>
                             <Registration />
                         </OnlyUnauthenticated>
