@@ -1,7 +1,8 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AuthContext, useRequestWithRelogin } from '../components/Auth';
+import { AuthContext } from '../components/Auth/Context';
+import { useRequestWithRelogin } from '../components/Auth/Required';
 import requestPost from '../requests/post';
 
 
