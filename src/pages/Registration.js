@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
-import request from '../request';
+import requestAuth from '../requests/auth';
 
 
 export function Registration(props) {
@@ -25,7 +25,7 @@ export function Registration(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data: tokens } = await request.register({ ...regFormState });
+            const { data: tokens } = await requestAuth.register({ ...regFormState });
             window.localStorage.setItem("tokens", JSON.stringify(tokens));
             navigate('/'); // query param - comeback link
         }

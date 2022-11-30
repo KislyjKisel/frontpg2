@@ -3,7 +3,7 @@ import { useNavigate, Link as RLink } from "react-router-dom";
 import { Box, Button, Container, Link, TextField, Typography } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
-import request from '../request';
+import requestAuth from '../requests/auth';
 
 
 export function Login(props) {
@@ -23,7 +23,7 @@ export function Login(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data: tokens } = await request.login({ ...loginFormState });
+            const { data: tokens } = await requestAuth.login({ ...loginFormState });
             window.localStorage.setItem("tokens", JSON.stringify(tokens));
             navigate('/'); // query param - comeback link
         }

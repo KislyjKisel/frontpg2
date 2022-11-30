@@ -1,13 +1,13 @@
 import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AuthContext, useRequestAuthenticated } from '../components/Auth';
-import request from '../request';
+import { AuthContext, useRequestWithRelogin } from '../components/Auth';
+import requestPost from '../requests/post';
 
 
 export function Home() {
     const { userInfo } = useContext(AuthContext);
-    const requestAuthenticated = useRequestAuthenticated();
+    const requestWithRelogin = useRequestWithRelogin();
     const [state, setState] = useState({
         viewId: 0,
         title: "",
@@ -22,7 +22,7 @@ export function Home() {
     }
 
     const view = async (e) => {
-        const res = await requestAuthenticated(() => request.postView(state.viewId));
+        const res = await requestPost.view(state.viewId);
 
         setState({
             viewId: state.viewId,
@@ -32,7 +32,7 @@ export function Home() {
     };
 
     const create = async (e) => {
-        await requestAuthenticated(() => request.postCreate({
+        await requestWithRelogin(() => requestPost.create({
             title: state.title,
             text: state.text,
         }));

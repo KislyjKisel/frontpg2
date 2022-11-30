@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react';
 
-import request, { isAuthRequiredError } from '../request';
+import { isAuthRequiredError } from '../requests/auth'
+import requestUser from '../requests/user';
 
 
 const unauthenticatedState = { isUserLoggedIn: false, userInfo: null };
@@ -13,7 +14,7 @@ export function AuthProvider(props) {
 
     const updateUserInfo = (newUserInfo) => {
         setState({
-            isUserLoggedIn: true,
+            isUserLoggedIn: !!newUserInfo,
             userInfo: newUserInfo,
         });
     };
@@ -50,9 +51,9 @@ export function OnlyUnauthenticated(props) {
 }
 
 
-const AuthReqContext = React.createContext({});
+const RequestWithReloginContext = React.createContext({});
 
-const requestAuthenticated = (redirect, navigate, logout = undefined) => async (req) => {
+const requestWithRelogin = (redirect, navigate, logout = undefined) => async (req) => {
     try {
         return await req()
     }
@@ -68,12 +69,12 @@ const requestAuthenticated = (redirect, navigate, logout = undefined) => async (
     }
 };
 
-export function useRequestAuthenticated() {
+export function useRequestWithRelogin() {
     const { logout } = useContext(AuthContext);
-    const { redirect } = useContext(AuthReqContext);
+    const { redirect } = useContext(RequestWithReloginContext);
     const navigate = useNavigate();
 
-    return requestAuthenticated(redirect, navigate, logout);
+    return requestWithRelogin(redirect, navigate, logout);
 }
 
 export function AuthRequired(props) {
@@ -88,17 +89,17 @@ export function AuthRequired(props) {
             return;
         }
 
-        requestAuthenticated(props.redirect, navigate)(async () => {
-            const res = await request.user();
+        requestWithRelogin(props.redirect, navigate)(async () => {
+            const res = await requestUser();
             authCtx.updateUserInfo(res.data);
         });
     })(); }, [authCtx.isUserLoggedIn]);
 
     if(authCtx.isUserLoggedIn) {
         return (
-            <AuthReqContext.Provider value={{ redirect: props.redirect }}>
+            <RequestWithReloginContext.Provider value={{ redirect: props.redirect }}>
                 {props.children}
-            </AuthReqContext.Provider>
+            </RequestWithReloginContext.Provider>
         );
     }
     else {
