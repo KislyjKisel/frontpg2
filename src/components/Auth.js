@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react';
 
 import { getTokens, isAuthRequiredError } from '../requests/auth'
@@ -53,7 +53,7 @@ export function OnlyUnauthenticated(props) {
 
 const RequestWithReloginContext = React.createContext({});
 
-const requestWithRelogin = (redirect, navigate, logout = undefined) => async (req) => {
+const requestWithRelogin = (redirect, navigate, location, logout = undefined) => async (req) => {
     try {
         return await req()
     }
@@ -65,7 +65,7 @@ const requestWithRelogin = (redirect, navigate, logout = undefined) => async (re
             logout();
             alert('Session expired, please re-login');
         }
-        navigate(redirect);
+        navigate(redirect, { state: { from: location } });
     }
 };
 
@@ -73,13 +73,15 @@ export function useRequestWithRelogin() {
     const { logout } = useContext(AuthContext);
     const { redirect } = useContext(RequestWithReloginContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    return requestWithRelogin(redirect, navigate, logout);
+    return requestWithRelogin(redirect, navigate, location, logout);
 }
 
 export function AuthRequired(props) {
     const authCtx = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => { (async () => {
         if(authCtx.isUserLoggedIn) return;
@@ -89,7 +91,7 @@ export function AuthRequired(props) {
             return;
         }
 
-        requestWithRelogin(props.redirect, navigate)(async () => {
+        requestWithRelogin(props.redirect, navigate, location)(async () => {
             const res = await requestUser();
             authCtx.updateUserInfo(res.data);
         });

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import requestAuth, { setTokens } from '../requests/auth';
 import { FieldKind, useAutoAuthForm } from '../components/Auth/Form/auto';
@@ -22,6 +22,7 @@ const loginFormFields = JSON.stringify([
 
 export function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const AutoAuthForm = useAutoAuthForm(loginFormFields);
 
     const handleSubmit = async (loginFormState, e) => {
@@ -29,7 +30,7 @@ export function Login() {
         try {
             const { data: tokens } = await requestAuth.login({ ...loginFormState });
             setTokens(tokens);
-            navigate('/'); // query param - comeback link
+            navigate(location.state?.from?.pathname ?? '/');
         }
         catch(e) {
             console.error(e);
