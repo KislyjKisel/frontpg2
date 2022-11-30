@@ -7,8 +7,10 @@ import request from './common';
 const LSKEY_TOKENS = 'tokens';
 
 export const getTokens = () => JSON.parse(localStorage.getItem(LSKEY_TOKENS));
-export const setTokens = (tokens) => localStorage.setItem(LSKEY_TOKENS, tokens);
-// todo: use setItem.bind(?, LSKEY_TOKENS) instead of lambda
+
+export const setTokens = (tokens) => {
+    localStorage.setItem(LSKEY_TOKENS, JSON.stringify(tokens));
+};
 
 
 const AUTH_REQUIRED_RESPONSE_STATUSES = [

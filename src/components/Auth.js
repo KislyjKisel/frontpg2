@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react';
 
-import { isAuthRequiredError } from '../requests/auth'
+import { getTokens, isAuthRequiredError } from '../requests/auth'
 import requestUser from '../requests/user';
 
 
@@ -84,7 +84,7 @@ export function AuthRequired(props) {
     useEffect(() => { (async () => {
         if(authCtx.isUserLoggedIn) return;
 
-        if(!localStorage.getItem('tokens')) {
+        if(!getTokens()) {
             navigate(props.redirect);
             return;
         }
