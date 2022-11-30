@@ -8,30 +8,24 @@ import request from '../request';
 
 export function Login(props) {
     const navigate = useNavigate();
-    const [state, setState] = useState({
+    const [loginFormState, setLoginFormState] = useState({
         login: "",
         password: "",
     });
 
     const handleChange = (e) => {
-        setState({
-            ...state,
+        setLoginFormState({
+            ...loginFormState,
             [e.target.name]: e.target.value,
         })
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // funny
+        e.preventDefault();
         try {
-            const res = await request.login({ login: state.login, password: state.password });
-            if(res.status === 200) {
-                window.localStorage.setItem("tokens", JSON.stringify({
-                    accessToken: res.data.accessToken,
-                    refreshToken: res.data.refreshToken,
-                }));
-                window.localStorage.setItem("login", state.login);
-                navigate('/'); // query param - comeback link
-            }
+            const { data: tokens } = await request.login({ ...loginFormState });
+            window.localStorage.setItem("tokens", JSON.stringify(tokens));
+            navigate('/'); // query param - comeback link
         }
         catch(e) {
             console.error(e);
@@ -69,10 +63,10 @@ export function Login(props) {
                     <TextField
                         variant="outlined"
                         required
-                        fullWidth
                         name="login"
+                        fullWidth
                         label="Login"
-                        value={state.login}
+                        value={loginFormState.login}
                         onChange={handleChange}
                     />
                     <TextField
@@ -82,7 +76,7 @@ export function Login(props) {
                         name="password"
                         type="password"
                         label="Password"
-                        value={state.password}
+                        value={loginFormState.password}
                         onChange={handleChange}
                     />
                     <Button

@@ -8,7 +8,7 @@ import request from '../request';
 
 export function Registration(props) {
     const navigate = useNavigate();
-    const [state, setState] = useState({
+    const [regFormState, setRegFormState] = useState({
         login: "",
         password: "",
         firstName: "",
@@ -16,28 +16,18 @@ export function Registration(props) {
     });
 
     const handleChange = (e) => {
-        setState({
-            ...state,
+        setRegFormState({
+            ...regFormState,
             [e.target.name]: e.target.value,
         })
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // funny
+        e.preventDefault();
         try {
-            const res = await request.register({
-                login: state.login,
-                password: state.password,
-                firstName: state.firstName,
-                lastName: state.lastName,
-            });
-            if(res.status === 201) {
-                window.localStorage.setItem("tokens", JSON.stringify({
-                    accessToken: res.data.accessToken,
-                    refreshToken: res.data.refreshToken,
-                }));
-                navigate('/'); // query param - comeback link
-            }
+            const { data: tokens } = await request.register({ ...regFormState });
+            window.localStorage.setItem("tokens", JSON.stringify(tokens));
+            navigate('/'); // query param - comeback link
         }
         catch(e) {
             console.error(e);
@@ -78,7 +68,7 @@ export function Registration(props) {
                         fullWidth
                         name="login"
                         label="Login"
-                        value={state.login}
+                        value={regFormState.login}
                         onChange={handleChange}
                     />
                     <TextField
@@ -88,7 +78,7 @@ export function Registration(props) {
                         name="password"
                         type="password"
                         label="Password"
-                        value={state.password}
+                        value={regFormState.password}
                         onChange={handleChange}
                     />
                     <TextField
@@ -97,7 +87,7 @@ export function Registration(props) {
                         fullWidth
                         name="firstName"
                         label="First Name"
-                        value={state.firstName}
+                        value={regFormState.firstName}
                         onChange={handleChange}
                     />
                     <TextField
@@ -106,7 +96,7 @@ export function Registration(props) {
                         fullWidth
                         name="lastName"
                         label="Last Name"
-                        value={state.lastName}
+                        value={regFormState.lastName}
                         onChange={handleChange}
                     />
                     <Button
