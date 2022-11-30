@@ -1,10 +1,10 @@
 import { useContext, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import { AuthContext } from './Context';
 
 
-export function AuthProhibited({ children }) {
+export function AuthProhibited() {
     const authCtx = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,5 +16,5 @@ export function AuthProhibited({ children }) {
         }
     }, [authCtx.isUserLoggedIn, location, navigate]);
 
-    return children;
+    return <Outlet/>;
 }

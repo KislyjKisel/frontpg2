@@ -15,26 +15,14 @@ function App() {
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/register" element={
-                        <AuthProhibited>
-                            <Registration />
-                        </AuthProhibited>
-                    } />
-                    <Route path="/login" element={
-                        <AuthProhibited>
-                            <Login />
-                        </AuthProhibited>
-                    } />
-                    <Route path="/" element={
-                        <AuthRequired redirect='/login'>
-                            <Home/>
-                        </AuthRequired>
-                    } />
-                    <Route path="/test" element={
-                        <AuthRequired redirect='/login'>
-                            <Test/>
-                        </AuthRequired>
-                    } />
+                    <Route element={<AuthProhibited />}>
+                        <Route path="/register" element={<Registration />} />
+                        <Route path="/login" element={<Login />} />
+                    </Route>
+                    <Route element={<AuthRequired redirect='/login'/>} >
+                        <Route path="/" element={<Home />} />
+                        <Route path="/test" element={<Test />} />
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

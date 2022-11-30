@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import { getTokens, isAuthRequiredError } from '../../requests/auth';
 import requestUser from '../../requests/user';
@@ -51,7 +51,7 @@ export function AuthRequired(props) {
     if(authCtx.isUserLoggedIn) {
         return (
             <RequestWithReloginContext.Provider value={{ redirect: props.redirect }}>
-                {props.children}
+                <Outlet/>
             </RequestWithReloginContext.Provider>
         );
     }
