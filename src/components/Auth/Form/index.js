@@ -35,7 +35,6 @@ export default function AuthForm({
                 </Box>
                 <Grid2
                     container
-                    spacing={0}
                     sx={authFormStyles.alternativesGrid}
                 >
                     <Grid2 item xsOffset={6} xs>
