@@ -72,8 +72,7 @@ export async function authenticatedRequest(url, {
     catch(reqErr) {
         if(canRefresh &&
             reqErr instanceof AxiosError &&
-            reqErr.response?.status === StatusCodes.UNAUTHORIZED &&
-            reqErr.response.data === "Token expired"
+            reqErr.response?.status === StatusCodes.UNAUTHORIZED
         ) {
             try {
                 const refreshRes = await refresh();
