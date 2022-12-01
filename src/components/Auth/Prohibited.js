@@ -1,20 +1,17 @@
-import { useContext, useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { useContext } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router';
 
 import { AuthContext } from './Context';
 
 
 export function AuthProhibited() {
-    const authCtx = useContext(AuthContext);
-    const navigate = useNavigate();
+    const { isUserLoggedIn } = useContext(AuthContext);
     const location = useLocation();
 
-    useEffect(() => {
-        if(authCtx.isUserLoggedIn) {
-            navigate(location.state?.from?.pathname ?? '/');
-            return;
-        }
-    }, [authCtx.isUserLoggedIn, location, navigate]);
-
-    return <Outlet/>;
+    if(isUserLoggedIn) {
+        return <Navigate to={location.state?.from?.pathname ?? '/'}/>;
+    }
+    else {
+        return <Outlet/>;
+    }
 }
