@@ -42,7 +42,7 @@ export function Home() {
     return (
         <div>
             <h2>Welcome home, {userInfo.login}</h2>
-            <Link to="/registration">To Registration</Link>
+            <Link to="/register">To Registration</Link>
             <Link to="/login">To Login</Link>
             <h2>View</h2>
             <input name="viewId" placeholder="View ID" value={state.viewId} onChange={handleChange}/>
