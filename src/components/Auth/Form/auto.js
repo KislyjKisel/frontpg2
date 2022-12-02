@@ -8,6 +8,10 @@ export const FieldKind = {
     Text: 1,
 };
 
+const fieldComponentDictionary = {
+    [FieldKind.Text]: AuthTextField,
+};
+
 function createAutoAuthForm(fields, initialFormState) {
     return ({
         header,
@@ -34,20 +38,15 @@ function createAutoAuthForm(fields, initialFormState) {
                 onSubmit={e => onSubmit(formState, e)}
             >
                 {fields.map((field, fieldIdx) => {
-                    switch(field.kind) {
-                        case FieldKind.Text:
-                            return (
-                                <AuthTextField
-                                    key={`field-${fieldIdx}`}
-                                    required
-                                    name={field.name}
-                                    label={field.label}
-                                    value={formState[field.name]}
-                                    type={field.type}
-                                    onChange={handleChange}
-                                />
-                            );
-                    }
+                    const Field = fieldComponentDictionary[field.kind];
+                    return (
+                        <Field
+                            key={`field-${fieldIdx}`}
+                            value={formState[field.name]}
+                            onChange={handleChange}
+                            {...field}
+                        />
+                    );
                 })}
             </AuthForm>
         );
