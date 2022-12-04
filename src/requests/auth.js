@@ -37,8 +37,14 @@ const requestAuth = {
     login: ({ login, password }) => {
         return request.post('auth/login', { login, password });
     },
-    register: ({ login, password, firstName, lastName }) => {
-        return request.post('auth/register', { login, password, firstName, lastName });
+    register: ({ login, password, firstName, lastName, avatar }) => {
+        const regFormData = new FormData();
+        regFormData.append('avatar', avatar);
+        regFormData.append('login', login);
+        regFormData.append('password', password);
+        regFormData.append('firstName', firstName);
+        regFormData.append('lastName', lastName);
+        return request.post('auth/register', regFormData);
     },
 };
 

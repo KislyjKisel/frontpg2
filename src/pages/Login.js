@@ -1,31 +1,27 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import requestAuth, { setTokens } from '../requests/auth';
-import { FieldKind, useAutoAuthForm } from '../components/Auth/Form/auto';
+import AuthForm from '../components/Auth/Form/';
+import { AuthTextField } from '../components/Auth/fields';
 
-
-const loginFormFields = JSON.stringify([
-    {
-        kind: FieldKind.Text,
-        name: 'login',
-        label: 'Username',
-        required: true
-    },
-    {
-        kind: FieldKind.Text,
-        name: 'password',
-        label: 'Password',
-        required: true,
-        type: 'password'
-    },
-]);
 
 export function Login() {
     const navigate = useNavigate();
     const location = useLocation();
-    const AutoAuthForm = useAutoAuthForm(loginFormFields);
+    const [loginFormState, setLoginFormState] = useState({
+        login: '',
+        password: '',
+    });
 
-    const handleSubmit = async (loginFormState, e) => {
+    const handleTextChange = (e) => {
+        setLoginFormState({
+            ...loginFormState,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const { data: tokens } = await requestAuth.login({ ...loginFormState });
@@ -38,12 +34,27 @@ export function Login() {
     };
 
     return (
-        <AutoAuthForm
+        <AuthForm
             header='Log in'
             alternativePath='/register'
             alternativeText="Don't have an account? Register"
-            submitLabel='OK'
             onSubmit={handleSubmit}
-        />
+        >
+            <AuthTextField
+                name='login'
+                label='Username'
+                required
+                value={loginFormState.login}
+                onChange={handleTextChange}
+            />
+            <AuthTextField
+                name='password'
+                label='Password'
+                type='password'
+                required
+                value={loginFormState.password}
+                onChange={handleTextChange}
+            />
+        </AuthForm>
     );
 }

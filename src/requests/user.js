@@ -1,6 +1,6 @@
 import { authenticatedRequest } from './auth';
 
 
-const requestUser = () => authenticatedRequest('user');
+const requestUser = (login) => authenticatedRequest(login ? `user/${login}` : 'user');
 
 export default requestUser;

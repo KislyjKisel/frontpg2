@@ -10,7 +10,6 @@ export default function AuthForm({
     header,
     alternativePath,
     alternativeText,
-    submitLabel,
     children,
 }) {
     return (
@@ -26,11 +25,11 @@ export default function AuthForm({
                 >
                     {children}
                     <Button
-                        variant="contained"
+                        variant='contained'
                         fullWidth
-                        type="submit"
+                        type='submit'
                     >
-                        {submitLabel}
+                        OK
                     </Button>
                 </Box>
                 <Grid2

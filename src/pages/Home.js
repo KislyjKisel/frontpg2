@@ -42,6 +42,9 @@ export function Home() {
     return (
         <div>
             <h2>Welcome home, {userInfo.login}</h2>
+            {userInfo.avatarId ?
+                <img src={`${process.env.REACT_APP_URL_IMG}${userInfo.avatarId}.webp`} width='64px' height='64px'/>
+            : null}
             <Link to="/register">To Registration</Link>
             <Link to="/login">To Login</Link>
             <h2>View</h2>
